@@ -1,0 +1,34 @@
+services:
+  web:
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/stock_ai?directConnection=true}
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-stock_ai}
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-stock_ai}
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
