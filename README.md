@@ -49,14 +49,24 @@ docker compose up --build
 
 ## Sécurité & bonnes pratiques
 
-- Hash des mots de passe avec `bcryptjs`
+- Hash Argon2id (paramètres renforcés)
 - Sessions JWT signées (NextAuth) avec cookie HTTP-only
 - Validation stricte des formulaires (Zod + messages en français)
 - Rate-limiting prêt à ajouter sur les routes API (structure déjà isolée)
 - `poweredByHeader` désactivé et build `standalone` pour déploiement optimisé
 
+## Observabilité
+
+- Logs structurés JSON : `auth.signup`, `auth.login`, `auth.logout`, `auth.refresh`
+- Métriques Prometheus exposées sur `GET /api/metrics`
+  - `stock_ai_auth_login_success_total` / `stock_ai_auth_login_failure_total`
+  - `stock_ai_auth_login_duration_seconds`
+  - `stock_ai_auth_signup_success_total` / `stock_ai_auth_signup_failure_total`
+  - `stock_ai_auth_active_sessions`
+  - `stock_ai_auth_session_refresh_total`
+
 ## Prochaines étapes suggérées
 
-- Ajouter un système d'audit / logs pour les actions sensibles
-- Mettre en place des tests E2E (Playwright) sur les parcours d'authentification
+- Ajouter des tests E2E/contract pour couvrir les parcours auth (objectif 80 %+ coverage service)
+- Brancher la stack de monitoring externe (Grafana/Datadog) sur `/api/metrics`
 - Étendre le dashboard avec les fonctionnalités métiers de StockAI
