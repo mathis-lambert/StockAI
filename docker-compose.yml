@@ -16,10 +16,12 @@ services:
         condition: service_healthy
 
   mongo:
-    image: mongo:7.0
+    image: mongo:latest
     restart: unless-stopped
     environment:
       MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-stock_ai}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD:-password}
     ports:
       - "27017:27017"
     healthcheck:

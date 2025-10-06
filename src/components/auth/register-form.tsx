@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,7 +26,6 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export function RegisterForm() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -38,45 +37,46 @@ export function RegisterForm() {
     },
   });
 
-  const onSubmit = (values: RegisterValues) => {
+  const onSubmit = async (values: RegisterValues) => {
     setFormError(null);
-    startTransition(() => {
-      const registerUser = async () => {
-        const response = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        });
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-        if (!response.ok) {
-          const payload = await response.json().catch(() => ({}));
-          setFormError(payload?.message ?? "Impossible de créer le compte");
-          return;
-        }
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        setFormError(payload?.message ?? "Impossible de créer le compte");
+        return;
+      }
 
-        const signInResponse = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
+      const signInResponse = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
 
-        if (signInResponse?.error) {
-          toast.success(
-            "Compte créé avec succès. Vous pouvez maintenant vous connecter.",
-          );
-          router.replace("/login");
-          return;
-        }
+      if (signInResponse?.error) {
+        toast.success(
+          "Compte créé avec succès. Vous pouvez maintenant vous connecter.",
+        );
+        router.replace("/login");
+        return;
+      }
 
-        toast.success("Bienvenue ! Votre compte est actif.");
-        router.replace("/dashboard");
-        router.refresh();
-      };
-
-      void registerUser();
-    });
+      toast.success("Bienvenue ! Votre compte est actif.");
+      router.replace("/dashboard");
+      router.refresh();
+    } catch (error) {
+      setFormError(
+        "Une erreur inattendue est survenue pendant l'inscription. Réessayez.",
+      );
+      console.error("auth.register", error);
+    }
   };
 
   return (
@@ -148,8 +148,12 @@ export function RegisterForm() {
           </Alert>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? (
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Création du compte

@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
-import clientPromise from "@/lib/mongodb";
+import { getMongoDb } from "@/lib/mongodb";
 
-const DB_NAME = process.env.MONGODB_DB_NAME ?? "stock_ai";
 const USERS_COLLECTION = "users";
 
 type BaseUser = {
@@ -16,8 +15,7 @@ type BaseUser = {
 export type User = BaseUser;
 
 async function getUsersCollection() {
-  const client = await clientPromise;
-  const db = client.db(DB_NAME);
+  const db = await getMongoDb();
   const collection = db.collection<BaseUser>(USERS_COLLECTION);
   await collection.createIndex({ email: 1 }, { unique: true });
   return collection;

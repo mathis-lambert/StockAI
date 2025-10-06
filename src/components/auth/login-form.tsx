@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
@@ -26,7 +26,6 @@ type LoginValues = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -36,28 +35,27 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (values: LoginValues) => {
+  const onSubmit = async (values: LoginValues) => {
     setFormError(null);
-    startTransition(() => {
-      const authenticate = async () => {
-        const response = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
+    try {
+      const response = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
 
-        if (response?.error) {
-          setFormError(response.error);
-          return;
-        }
+      if (!response || response.error) {
+        setFormError(resolveAuthError(response?.error));
+        return;
+      }
 
-        toast.success("Connexion réussie");
-        router.replace("/dashboard");
-        router.refresh();
-      };
-
-      void authenticate();
-    });
+      toast.success("Connexion réussie");
+      router.replace("/dashboard");
+      router.refresh();
+    } catch (error) {
+      setFormError("Une erreur inattendue est survenue. Réessayez.");
+      console.error("auth.login", error);
+    }
   };
 
   return (
@@ -103,8 +101,12 @@ export function LoginForm() {
           </Alert>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? (
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Connexion en cours
@@ -116,4 +118,17 @@ export function LoginForm() {
       </form>
     </Form>
   );
+}
+
+function resolveAuthError(code?: string | null) {
+  if (!code) {
+    return "Identifiants invalides.";
+  }
+
+  switch (code) {
+    case "CredentialsSignin":
+      return "Email ou mot de passe incorrect.";
+    default:
+      return code;
+  }
 }

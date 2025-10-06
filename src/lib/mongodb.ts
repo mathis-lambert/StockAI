@@ -1,28 +1,49 @@
+import "server-only";
+
+import { env } from "@/env";
 import { MongoClient, MongoClientOptions } from "mongodb";
+import { cache } from "react";
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error("Missing MONGODB_URI environment variable");
-}
-
-const options: MongoClientOptions = {};
-
-const globalForMongo = globalThis as unknown as {
-  _mongoClientPromise?: Promise<MongoClient>;
+const options: MongoClientOptions = {
+  maxPoolSize: 10,
+  serverApi: {
+    version: "1",
+    strict: true,
+    deprecationErrors: true,
+  },
 };
 
-let clientPromise: Promise<MongoClient>;
+type MongoGlobal = {
+  client?: MongoClient;
+  promise?: Promise<MongoClient>;
+};
 
-if (process.env.NODE_ENV === "development") {
-  if (!globalForMongo._mongoClientPromise) {
-    const client = new MongoClient(uri, options);
-    globalForMongo._mongoClientPromise = client.connect();
+const globalForMongo = globalThis as typeof globalThis & {
+  __mongo?: MongoGlobal;
+};
+
+globalForMongo.__mongo ??= {};
+
+function getClientPromise(): Promise<MongoClient> {
+  const mongo = globalForMongo.__mongo!;
+
+  if (!mongo.promise) {
+    const client = new MongoClient(env.MONGODB_URI, options);
+    mongo.client = client;
+    mongo.promise = client.connect();
   }
-  clientPromise = globalForMongo._mongoClientPromise;
-} else {
-  const client = new MongoClient(uri, options);
-  clientPromise = client.connect();
+
+  return mongo.promise;
 }
 
-export default clientPromise;
+export const getMongoClient = cache(async () => {
+  const client = await getClientPromise();
+  return client;
+});
+
+export const getMongoDb = cache(async () => {
+  const client = await getMongoClient();
+  return client.db(env.MONGODB_DB_NAME);
+});
+
+export default getMongoClient;

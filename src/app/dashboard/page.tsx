@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import {
   Card,
   CardContent,
@@ -9,19 +7,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { authOptions } from "@/lib/auth";
 import { getAuthMetricsSnapshot } from "@/lib/metrics";
+import { requireUser } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "StockAI | Tableau de bord",
 };
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    redirect("/login");
-  }
+  await requireUser("/login");
 
   const metrics = await getAuthMetricsSnapshot();
 

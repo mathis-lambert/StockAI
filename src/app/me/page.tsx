@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import {
   Card,
   CardContent,
@@ -9,18 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { authOptions } from "@/lib/auth";
+import { requireUser } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "StockAI | Mon profil",
 };
 
 export default async function MePage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await requireUser("/login");
   const userEmail = session.user.email ?? "Email non renseigné";
 
   return (

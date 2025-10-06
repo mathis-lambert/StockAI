@@ -10,13 +10,10 @@ import {
 } from "@/lib/metrics";
 import { findUserByEmail } from "@/lib/user";
 import { loginSchema } from "@/lib/validations/auth";
-
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error("Missing NEXTAUTH_SECRET environment variable");
-}
+import { env } from "@/env";
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
