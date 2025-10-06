@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentProps } from "react";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -7,7 +8,17 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-export function SignOutButton() {
+type SignOutButtonProps = {
+  size?: ComponentProps<typeof Button>["size"];
+  variant?: ComponentProps<typeof Button>["variant"];
+  className?: string;
+};
+
+export function SignOutButton({
+  size = "sm",
+  variant = "outline",
+  className,
+}: SignOutButtonProps = {}) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
@@ -36,8 +47,9 @@ export function SignOutButton() {
 
   return (
     <Button
-      variant="outline"
-      size="sm"
+      variant={variant}
+      size={size}
+      className={className}
       onClick={handleSignOut}
       disabled={isPending}
     >

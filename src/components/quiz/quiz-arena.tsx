@@ -262,9 +262,9 @@ export function QuizArena() {
         remainingByDomain={remainingByDomain}
       />
 
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:items-start">
         <div className="flex flex-col gap-4">
-          <div className="rounded-3xl border border-border/70 bg-card/60 p-4 shadow-sm">
+          <div className="rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-lg font-bold text-foreground">
@@ -277,7 +277,7 @@ export function QuizArena() {
                 </p>
               </div>
 
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-inner shadow-primary/20">
                 <Hand className="h-6 w-6" aria-hidden="true" />
               </span>
             </div>
@@ -285,13 +285,21 @@ export function QuizArena() {
 
           <div className="relative flex min-h-[20rem] items-center justify-center">
             {isComplete ? (
-              <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-primary/50 bg-primary/10 p-8 text-center text-primary">
-                <PartyPopper className="h-12 w-12" aria-hidden="true" />
+              <div className="flex flex-col items-center gap-4 rounded-3xl border border-primary/50 bg-primary/10 p-8 text-center text-primary shadow-sm">
+                <PartyPopper
+                  className="h-12 w-12 text-primary"
+                  aria-hidden="true"
+                />
                 <p className="text-lg font-semibold">
                   Deck terminé ! Tu peux relancer un tour pour continuer à
                   briller.
                 </p>
-                <Button onClick={handleReset} size="lg" variant="default">
+                <Button
+                  onClick={handleReset}
+                  size="lg"
+                  variant="default"
+                  className="gap-2 rounded-full px-6 shadow-sm"
+                >
                   <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
                   Relancer une série
                 </Button>
@@ -358,7 +366,7 @@ export function QuizArena() {
                 size="lg"
                 onClick={() => handleAnswerWithButton("left")}
                 disabled={!activeCard || interactionsLocked}
-                className="gap-2"
+                className="gap-2 rounded-full px-6"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 Faux (←)
@@ -368,7 +376,7 @@ export function QuizArena() {
                 size="lg"
                 onClick={() => handleAnswerWithButton("right")}
                 disabled={!activeCard || interactionsLocked}
-                className="gap-2"
+                className="gap-2 rounded-full px-6 shadow-sm"
               >
                 Vrai (→)
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -378,7 +386,7 @@ export function QuizArena() {
                 size="lg"
                 onClick={handleReset}
                 disabled={interactionsLocked}
-                className="gap-2"
+                className="gap-2 rounded-full px-6 text-muted-foreground hover:text-foreground"
               >
                 <RotateCcw className="h-4 w-4" aria-hidden="true" />
                 Mélanger
@@ -387,12 +395,12 @@ export function QuizArena() {
           )}
         </div>
 
-        <aside className="flex h-full flex-col gap-4 rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
-          <header className="flex items-center justify-between">
+        <aside className="flex h-full flex-col gap-5 rounded-3xl border border-border/60 bg-card p-5 shadow-sm lg:sticky lg:top-28">
+          <header className="flex items-center justify-between gap-3 border-b border-border/50 pb-3">
             <h3 className="text-base font-semibold text-foreground">
               Tes dernières réponses
             </h3>
-            <span className="text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary dark:bg-primary/20 dark:text-primary-foreground">
               {history.length} / 5
             </span>
           </header>

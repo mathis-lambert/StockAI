@@ -4,6 +4,7 @@ import { SessionProvider } from "@/components/providers/session-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import Navbar from "@/components/navigation/navbar";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,17 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="h-full">
+    <html lang="fr" className="h-full" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background text-foreground antialiased`}
       >
-        <SessionProvider>
-          <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-background via-background to-muted/30">
-            <Navbar />
-            <div className="flex-1">{children}</div>
-          </div>
-        </SessionProvider>
-        <Toaster richColors position="bottom-right" expand={false} />
+        <ThemeProvider>
+          <SessionProvider>
+            <div className="relative flex min-h-screen flex-col bg-background">
+              <Navbar />
+              <div className="relative flex-1">{children}</div>
+            </div>
+          </SessionProvider>
+          <Toaster richColors position="bottom-right" expand={false} />
+        </ThemeProvider>
       </body>
     </html>
   );

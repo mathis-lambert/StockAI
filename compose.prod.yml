@@ -1,0 +1,23 @@
+services:
+  stockai:
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stock_ai.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.stock_ai.entrypoints=websecure"
+      - "traefik.http.routers.stock_ai.tls=true"
+      - "traefik.http.routers.stock_ai.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stock_ai.loadbalancer.server.port=3000"
+    networks:
+      - proxy
+      - databases
+
+networks:
+  proxy:
+    external: true
+  databases:
+    external: true
