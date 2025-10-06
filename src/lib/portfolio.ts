@@ -55,6 +55,7 @@ export async function createPositionForUser(
   const now = new Date();
 
   const normalized = {
+    _id: new ObjectId(),
     userId: userObjectId,
     symbol: data.symbol,
     quantity: data.quantity,

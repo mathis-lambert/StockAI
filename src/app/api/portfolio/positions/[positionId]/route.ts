@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { authOptions } from "@/lib/auth";
 import { deletePositionForUser, updatePositionForUser } from "@/lib/portfolio";
 import { positionInputSchema } from "@/lib/validations/portfolio";
+
+type RouteContext = { params: Promise<{ positionId: string }> };
 
 async function requireApiUser() {
   const session = await getServerSession(authOptions);
@@ -25,11 +27,10 @@ function buildErrorResponse(error: unknown) {
   );
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: { positionId: string } },
-) {
+export async function PATCH(request: NextRequest, context: RouteContext) {
   try {
+    const { positionId } = await context.params;
+
     const userId = await requireApiUser();
     if (!userId) {
       return NextResponse.json(
@@ -53,7 +54,7 @@ export async function PATCH(
 
     const updated = await updatePositionForUser(
       userId,
-      params.positionId,
+      positionId,
       parsed.data,
     );
 
@@ -81,11 +82,10 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  _request: Request,
-  { params }: { params: { positionId: string } },
-) {
+export async function DELETE(_request: NextRequest, context: RouteContext) {
   try {
+    const { positionId } = await context.params;
+
     const userId = await requireApiUser();
     if (!userId) {
       return NextResponse.json(
@@ -94,7 +94,7 @@ export async function DELETE(
       );
     }
 
-    const deleted = await deletePositionForUser(userId, params.positionId);
+    const deleted = await deletePositionForUser(userId, positionId);
     if (!deleted) {
       return NextResponse.json(
         { message: "Position introuvable" },
