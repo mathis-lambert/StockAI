@@ -9,7 +9,7 @@ const LoginForm = dynamic(() =>
 );
 
 export default async function LoginPage() {
-  await redirectIfAuthenticated("/dashboard");
+  await redirectIfAuthenticated("/portfolio");
 
   return (
     <AuthPanel

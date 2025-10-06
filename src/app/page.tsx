@@ -2,6 +2,6 @@ import { redirect } from "next/navigation";
 import { redirectIfAuthenticated } from "@/lib/session";
 
 export default async function HomePage() {
-  await redirectIfAuthenticated("/dashboard");
+  await redirectIfAuthenticated("/portfolio");
   redirect("/login");
 }

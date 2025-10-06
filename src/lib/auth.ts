@@ -2,12 +2,6 @@ import argon2 from "argon2";
 import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { logAuthError, logAuthInfo } from "@/lib/logger";
-import {
-  decrementActiveSessions,
-  incrementActiveSessions,
-  recordLoginMetrics,
-  recordSessionRefresh,
-} from "@/lib/metrics";
 import { findUserByEmail } from "@/lib/user";
 import { loginSchema } from "@/lib/validations/auth";
 import { env } from "@/env";
@@ -32,10 +26,6 @@ export const authOptions: NextAuthOptions = {
 
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) {
-          recordLoginMetrics({
-            success: false,
-            durationMs: performance.now() - startedAt,
-          });
           logAuthError("auth.login", "Validation des identifiants échouée", {
             issues: parsed.error.flatten().fieldErrors,
           });
@@ -45,10 +35,6 @@ export const authOptions: NextAuthOptions = {
         const normalizedEmail = parsed.data.email.toLowerCase();
         const user = await findUserByEmail(normalizedEmail);
         if (!user) {
-          recordLoginMetrics({
-            success: false,
-            durationMs: performance.now() - startedAt,
-          });
           logAuthError("auth.login", "Compte introuvable", {
             email: normalizedEmail,
           });
@@ -60,10 +46,6 @@ export const authOptions: NextAuthOptions = {
           parsed.data.password,
         );
         if (!passwordMatches) {
-          recordLoginMetrics({
-            success: false,
-            durationMs: performance.now() - startedAt,
-          });
           logAuthError("auth.login", "Mot de passe incorrect", {
             email: normalizedEmail,
           });
@@ -71,7 +53,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         const durationMs = performance.now() - startedAt;
-        recordLoginMetrics({ success: true, durationMs });
         logAuthInfo("auth.login", "Connexion réussie", {
           email: normalizedEmail,
           userId: user._id.toString(),
@@ -107,21 +88,18 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async signIn({ user }) {
-      incrementActiveSessions();
       logAuthInfo("auth.login", "Session ouverte", {
         userId: user.id,
         email: user.email,
       });
     },
     async signOut({ token }) {
-      decrementActiveSessions();
       logAuthInfo("auth.logout", "Déconnexion", {
         userId: token?.id,
         email: token?.email,
       });
     },
     async session({ session }) {
-      recordSessionRefresh();
       logAuthInfo("auth.refresh", "Session rafraîchie", {
         userId: session.user?.id,
         email: session.user?.email,

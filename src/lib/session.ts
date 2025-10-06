@@ -10,7 +10,7 @@ export async function requireUser(redirectTo = "/login") {
   return session;
 }
 
-export async function redirectIfAuthenticated(redirectTo = "/dashboard") {
+export async function redirectIfAuthenticated(redirectTo = "/portfolio") {
   const session = await getServerSession(authOptions);
   if (session?.user) {
     redirect(redirectTo);

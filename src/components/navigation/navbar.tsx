@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const navigationLinks: Array<{ href: string; label: string }> = [
-  { href: "/dashboard", label: "Tableau de bord" },
+  { href: "/portfolio", label: "Portefeuille" },
   { href: "/me", label: "Mon espace" },
 ];
 
@@ -29,7 +29,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 flex w-full border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
         <Link
-          href="/dashboard"
+          href="/portfolio"
           className="flex items-center gap-3 rounded-md px-2 py-1 transition hover:bg-accent"
         >
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">

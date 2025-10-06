@@ -7,11 +7,11 @@ const RegisterForm = dynamic(
     import("@/components/auth/register-form").then((mod) => ({
       default: mod.RegisterForm,
     })),
-  { suspense: true },
+  {},
 );
 
 export default async function RegisterPage() {
-  await redirectIfAuthenticated("/dashboard");
+  await redirectIfAuthenticated("/portfolio");
 
   return (
     <AuthPanel

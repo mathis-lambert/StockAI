@@ -28,7 +28,7 @@ npm install
 npm run dev
 ```
 
-L'application est disponible sur http://localhost:3000. Les redirections automatiques vous amènent vers `/login` ou `/dashboard` selon l'état de la session.
+L'application est disponible sur http://localhost:3000. Les redirections automatiques vous amènent vers `/login` ou `/portfolio` selon l'état de la session.
 
 ### Mode production via Docker
 
@@ -42,7 +42,7 @@ docker compose up --build
 ## Structure clés
 
 - `src/app/(auth)` : pages d'authentification (login/register) + layout dédié
-- `src/app/dashboard` : première page authentifiée, exemple de SSR avec session
+- `src/app/portfolio` : espace principal authentifié et fonctionnalités métiers
 - `src/app/api/auth` : routes API Next.js (NextAuth + inscription personnalisée)
 - `src/components/auth` : formulaires et bouton de déconnexion basés sur Shadcn
 - `src/lib` : configuration MongoDB, logique de sécurité, validations Zod
@@ -58,15 +58,8 @@ docker compose up --build
 ## Observabilité
 
 - Logs structurés JSON : `auth.signup`, `auth.login`, `auth.logout`, `auth.refresh`
-- Métriques Prometheus exposées sur `GET /api/metrics`
-  - `stock_ai_auth_login_success_total` / `stock_ai_auth_login_failure_total`
-  - `stock_ai_auth_login_duration_seconds`
-  - `stock_ai_auth_signup_success_total` / `stock_ai_auth_signup_failure_total`
-  - `stock_ai_auth_active_sessions`
-  - `stock_ai_auth_session_refresh_total`
 
 ## Prochaines étapes suggérées
 
 - Ajouter des tests E2E/contract pour couvrir les parcours auth (objectif 80 %+ coverage service)
-- Brancher la stack de monitoring externe (Grafana/Datadog) sur `/api/metrics`
-- Étendre le dashboard avec les fonctionnalités métiers de StockAI
+- Étendre le portefeuille avec les fonctionnalités métiers de StockAI

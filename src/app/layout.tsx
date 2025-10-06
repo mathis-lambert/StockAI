@@ -36,7 +36,7 @@ export default function RootLayout({
             <div className="flex-1">{children}</div>
           </div>
         </SessionProvider>
-        <Toaster richColors position="top-center" expand={false} />
+        <Toaster richColors position="bottom-right" expand={false} />
       </body>
     </html>
   );

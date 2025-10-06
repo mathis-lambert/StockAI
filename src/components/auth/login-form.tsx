@@ -50,7 +50,7 @@ export function LoginForm() {
       }
 
       toast.success("Connexion réussie");
-      router.replace("/dashboard");
+      router.replace("/portfolio");
       router.refresh();
     } catch (error) {
       setFormError("Une erreur inattendue est survenue. Réessayez.");

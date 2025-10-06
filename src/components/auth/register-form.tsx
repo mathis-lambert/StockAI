@@ -69,7 +69,7 @@ export function RegisterForm() {
       }
 
       toast.success("Bienvenue ! Votre compte est actif.");
-      router.replace("/dashboard");
+      router.replace("/portfolio");
       router.refresh();
     } catch (error) {
       setFormError(
