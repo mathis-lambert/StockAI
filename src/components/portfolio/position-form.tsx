@@ -49,9 +49,6 @@ export function PositionForm({
     }
   }, [defaultValues]);
 
-  const title =
-    mode === "create" ? "Ajouter une position" : "Mettre à jour la position";
-
   const submitLabel = mode === "create" ? "Enregistrer" : "Mettre à jour";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -121,17 +118,7 @@ export function PositionForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-lg border border-border/60 bg-background p-4 shadow-sm"
-    >
-      <div className="mb-4">
-        <h3 className="text-base font-semibold">{title}</h3>
-        <p className="text-sm text-muted-foreground">
-          Renseignez le symbole, la quantité et votre prix d&apos;entrée moyen.
-        </p>
-      </div>
-
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
           <label className="block text-sm font-medium text-muted-foreground">
@@ -178,7 +165,7 @@ export function PositionForm({
         <p className="mt-4 text-sm text-destructive">{formError}</p>
       ) : null}
 
-      <div className="mt-6 flex items-center justify-end gap-2">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button
           type="button"
           variant="ghost"

@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 const navigationLinks: Array<{ href: string; label: string }> = [
   { href: "/portfolio", label: "Portefeuille" },
   { href: "/me", label: "Mon espace" },
+  { href: "/quizz", label: "Quiz flashcards" },
 ];
 
 export function Navbar() {
